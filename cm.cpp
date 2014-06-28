@@ -11,6 +11,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <cstring>
 #include "token.h"
 #include "tokenizer.h"
 #include "parser.h"
