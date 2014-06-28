@@ -4,7 +4,8 @@ By: David Karhi (dkarhi@gmail.com)
 INTRODUCTION
 -----------------------
 
-This is a compiler for a programming language called C-. It utilizes a top-down recursive parser and generates SPIM assembly code. I wrote this as part of a course that I was taking on compilers and I have long since lost the original grammar for the language. When I find time, I'll try to reverse engineer the grammar.   
+This is a compiler for a programming language called C-. It utilizes a top-down recursive parser and generates SPIM assembly code. I wrote this as part of a course that I was taking on compilers and I have long since lost the original grammar for the language. When I find time, I'll try to reverse engineer the grammar.
+
 The following files are needed to run the compiler and should be included:
 
    README          -   This is the file that you are reading
