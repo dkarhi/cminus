@@ -25,6 +25,7 @@
 #ifndef TOKENIZER_H
 #define TOKENIZER_H
 
+#include <cstdlib>
 #include <cctype>
 #include "token.h"
 
