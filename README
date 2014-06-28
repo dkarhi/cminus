@@ -1,0 +1,148 @@
+By: David Karhi (dkarhi@gmail.com)
+
+
+INTRODUCTION
+-----------------------
+
+This is a compiler for a programming language called C-. It utilizes a top-down recursive parser and generates SPIM assembly code. I wrote this as part of a course that I was taking on compilers and I have long since lost the original grammar for the language. When I find time, I'll try to reverse engineer the grammar.   
+The following files are needed to run the compiler and should be included:
+
+   README          -   This is the file that you are reading
+   makefile        -   This is the makefile for the compiler
+   cm.cpp          -   This is the driver for the compiler
+   tokenizer.h     -   This is the header file for the tokenizer class
+   token.h         -   This is the header file for the token class
+   parsenode.h     -   This is the header file for the ParseNode class
+   parser.h        -   This is the header file for the Parse class
+   entry.h         -   This is the header file for the Entry class 
+   codegenerator.h -   This is the header file for the CodeGenerator class 
+
+
+COMPILING
+-----------------------
+
+   In order to compile the compiler, type `make` from the directory
+containing the necessary files. 
+
+
+RUNNING
+----------------------
+
+   The compiler is executed by providing a single argument as a filename. 
+For example, `cm input.cm` would run the compiler on the file input.cm. 
+In order to remove the compiler, type `make clean`. This command removes the 
+compiled executables and any other files created by the compiling process.
+
+   If you want to run the compiler with debugging tokens, add a -d flag
+after the input file. For example: 'parser input.cm -d'.
+
+
+TOKENS
+-----------------------
+
+   The parser prints the tokens to the screen if debugging is enabled with
+the -d flag. The tokens used are the following:
+
+ERROR:    This token indicates that an error occurred, usually an
+               unexpected character. A string is returned with this 
+               token to help describe what the error was.
+
+COMMA:    This token indicates that a comma (,) character was read.
+
+ID:       This token indicates that an identifier was found. A string
+               is returned with this token to describe the identifier.
+
+NUM:      This token indicates that a number was found. A string is 
+               returned with this token which represents the number.
+
+LEQ:      This token indicates that a less-than-or-equal-to operator
+               was found (<=).
+
+IF:       This token indicates that the reserved word "if" was found.
+
+WHILE:    This token indicates that the reserved word "while" was found.
+
+ELSE:     This token indicates that the reserved word "else" was found.
+
+INT:      This token indicates that the reserved word "int" was found.
+
+RETURN:   This token indicates that the reserved word "return" was found.
+
+VOID:     This token indicates that the reserved word "void" was found.
+
+PLUS:     This token indicates that the character plus (+) was found.
+
+MINUS:    This token indicates that the character minus (-) was found.
+
+STAR:     This token indicates that the character star (*) was found.
+
+DIV:      This token indicates that the character divide (/) was found.
+
+LT:       This token indicates that a less-than operator (<) was found.
+
+GT:       This token indicates that a greater-than operator (>) was 
+             found.
+
+GEQ:      This token indicates that a greater-than-or-equal-to operator
+             (>=) was found.
+
+EQ:       This token indicates that an equivalence operator (==) was 
+             found.
+
+NOTEQ:    This token indicates that a not-equal operator (!=) was 
+          found.
+
+ASSIGN:   This token indicates that an assignment operator (=) was 
+             found.
+
+LSQ:      This token indicates that a left square bracket ([) was found.
+
+RSQ:      This token indicates that a right square bracket (]) was found.
+
+LCURL:    This token indicates that a left curly brace ({) was found.
+
+RCURL:    This token indicates that a right curly brace (}) was found.
+
+LPAR:     This token indicates that a left parenthesis (() was found.
+
+RPAR:     This token indicates that a right parenthesis ()) was found.
+
+SEMIC:    This token indicates that a semi-colon (;) was found.
+
+END:      This token indicates that the end-of-file character has been 
+             found.
+
+
+OUTPUT
+-----------------------
+
+   The output for the ID, NUM, and ERROR tokens all have strings output
+with them in order to provide more details for each token. These 3 
+tokens have an output of the form:
+
+Token Name
+Value String
+Line Number
+Position
+
+   The output for the rest of the tokens does not include the value 
+string. Their output is of the form:
+
+Token Name
+Line Number
+Position
+
+
+ERRORS
+-----------------------
+
+   The value string for error tokens takes one of three forms. If the 
+scanner read an invalid character, then the invalid character is 
+output as the value string. However, if there was a buffer overflow,
+then the value string will be "Buffer" and the line number and position 
+of the error token will tell you where the buffer overflow occurred. 
+Please note that the maximum length of identifiers and number values is 
+defined in token.h as STRINGSIZE and is set to 256. Finally, if the value
+string is defined as "EOF" it means that the EOF token was reached 
+unexpectedly while the scanner was looking for the end of a comment.
+
