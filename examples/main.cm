@@ -1,0 +1,17 @@
+int foo(int a,int b, int c, int d,int e, int f)
+{
+	output(a);
+	output(b);
+	output(c);
+	output(d);
+	output(e);
+	output(f);
+	return 1;
+}
+
+void main(void)
+{
+	foo(7,8,1,0,5,9);
+}
+
+

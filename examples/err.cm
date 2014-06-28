@@ -1,0 +1,11 @@
+/* Error file A program to perform Euclid's*/
+
+int gcd( int u, int v)
+{
+	int _x; int y;
+	_x = input(); y = input();
+	if(_x ! y)
+	output(_x) = input();
+	output(gcd(_x,y));
+}
+/*Algorithm /* to computer*/ gcd */

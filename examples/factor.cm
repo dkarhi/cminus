@@ -1,0 +1,23 @@
+/*
+Sample program
+in C-- language -
+Algorithm to compute factorials*/
+
+int factorial(int fact )
+{
+	if(fact <= 1 ) return(1);
+	else return(fact * factorial(fact - 1)); 
+
+}
+
+
+void main(void)
+{
+	int i;
+
+	i = input();
+	
+	output(factorial(i));
+}
+
+

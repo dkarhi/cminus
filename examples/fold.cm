@@ -1,0 +1,13 @@
+void main(void)
+{
+	int x;
+	int y;
+	int z;
+
+	y = x+5;
+	z = y+5;
+	x = 3*6+4*(5+2);
+
+}
+
+
