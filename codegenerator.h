@@ -160,7 +160,6 @@ void CodeGenerator::generateSpim(ParseNode *treeNode)
             case WhileStmt:
                whilelabel=generateLabel("L");
                writeLabel(whilelabel);
-               endlabel=generateLabel("L_END");
                if (treeNode->getChild(0)->isNum())
                {  
                   outputFile << "   add $t5, $zero, ";
@@ -248,9 +247,6 @@ void CodeGenerator::generateSpim(ParseNode *treeNode)
                writeLabel(endlabel);
                break;
             case IfStmt:
-               elselabel=generateLabel("ELSE");
-               endiflabel=generateLabel("END_IF");
-               
                if (treeNode->getChild(0)->isNum())
                {
                   outputFile << "   add $t5, $zero, ";
@@ -334,6 +330,7 @@ void CodeGenerator::generateSpim(ParseNode *treeNode)
 
                generateSpim(treeNode->getChild(1));
                outputFile << "   j END_IF" << loopNum << endl;
+               elselabel=generateLabel("ELSE");
                writeLabel(elselabel);
                generateSpim(treeNode->getChild(2));
                endiflabel=generateLabel("END_IF");
