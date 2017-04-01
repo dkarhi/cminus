@@ -901,7 +901,8 @@ void CodeGenerator::writeReturn(ParseNode *node)
             }
          }
       }
-      else if (node->getChild(0)->isCall())
+      else if (node->getChild(0)->isCall() ||
+               node->getChild(0)->isMathOperator())
       {
 	 // this will put the result in v0
          generateSpim(node->getChild(0));
