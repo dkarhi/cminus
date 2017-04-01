@@ -214,7 +214,7 @@ void CodeGenerator::generateSpim(ParseNode *treeNode)
                   switch (treeNode->getChild(0)->getTokenType())
                   {
                      case LEQ:
-                        outputFile << "   gt $t4, $t5, " ;
+                        outputFile << "   bgt $t4, $t5, " ;
                         outputFile << "L_END" << loopNum << endl;
                         break;
                      case LT:
@@ -304,7 +304,7 @@ void CodeGenerator::generateSpim(ParseNode *treeNode)
                   switch (treeNode->getChild(0)->getTokenType())
                   {
                      case LEQ:
-                        outputFile << "   gt $t4, $t5, " ;
+                        outputFile << "   bgt $t4, $t5, " ;
                         outputFile << "ELSE" << loopNum << endl;
                         break;
                      case LT:
@@ -641,7 +641,7 @@ void CodeGenerator::generateSpim(ParseNode *treeNode)
                break;
             case NumExp: 
                outputFile << "   add $t5, $zero, ";
-               outputFile << treeNode->getChild(0)->getNum();
+               outputFile << treeNode->getNum() << endl;
                break;
             case VarExp: 
                if (treeNode->getChild(0))
@@ -660,7 +660,7 @@ void CodeGenerator::generateSpim(ParseNode *treeNode)
                }
                else
                {
-                  offset =  ((numParameters - treeNode->getChild(0)->getParamNum()) * 4) - offset;
+                  offset = ((numParameters - treeNode->getParamNum()) * 4) - offset;
                   outputFile << "   lw $t5, " << offset << "($fp)" << endl;
                }
                break;
