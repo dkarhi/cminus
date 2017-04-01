@@ -35,7 +35,7 @@ In order to remove the compiler, type `make clean`. This command removes the
 compiled executables and any other files created by the compiling process.
 
    If you want to run the compiler with debugging tokens, add a -d flag
-after the input file. For example: 'parser input.cm -d'.
+after the input file. For example: 'cm input.cm -d'.
 
 
 TOKENS
