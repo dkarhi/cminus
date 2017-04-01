@@ -575,7 +575,7 @@ void CodeGenerator::generateSpim(ParseNode *treeNode)
                if (treeNode->getChild(1)->isCall())
                {
                   generateSpim(treeNode->getChild(1));
-                  outputFile << "   add $s0, $zero, v0" << endl;
+                  outputFile << "   add $s0, $zero, $v0" << endl;
                }
                else if (treeNode->getChild(1)->isNum())
                {
