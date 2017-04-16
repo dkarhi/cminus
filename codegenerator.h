@@ -39,7 +39,6 @@ class CodeGenerator
       int numParameters;
       int numMemLocations;
       int loopNum;
-      int framePointer;
    public:
       CodeGenerator();
       char *generateLabel(char *s);
@@ -385,9 +384,23 @@ void CodeGenerator::generateSpim(ParseNode *treeNode)
                }
                else
                {
-                  int loopCount = 0;
+                  int argOffset = 0;
+                  int numArguments = 0;
+                  int argStackSize;
                   int pointer;
                   ParseNode *tmp;
+
+                  tmp = treeNode->getChild(0);
+                  while (tmp)
+                  {
+                    ++numArguments;
+                    tmp = tmp->getSibling();
+                  }
+
+                  // Allocate enough space on the stack for the arguments
+                  argStackSize = numArguments * 4;
+                  outputFile << "   sub $sp, $sp, " << argStackSize << endl;
+
                   tmp = treeNode->getChild(0);
                   while(tmp)
                   {
@@ -400,7 +413,7 @@ void CodeGenerator::generateSpim(ParseNode *treeNode)
                            pointer = tPointer+7;
                         else
                         {  
-                           pointer = abs(loopCount/4)+3;
+                           pointer = (argOffset/4)+3;
                            ++numA;
                         }
 
@@ -411,8 +424,8 @@ void CodeGenerator::generateSpim(ParseNode *treeNode)
                         outputFile << "   sw $"; 
                         printReg(pointer); 
                         outputFile << ", ";
-                        outputFile << loopCount-4 << "($sp)" << endl;
-                        loopCount -= 4;     
+                        outputFile << argOffset << "($sp)" << endl;
+                        argOffset += 4;     
                      }
                      else 
                      {
@@ -431,7 +444,7 @@ void CodeGenerator::generateSpim(ParseNode *treeNode)
                            pointer = tPointer+7;
                         else
                         {
-                           pointer = abs(loopCount/4)+3;
+                           pointer = (argOffset/4)+3;
                            ++numA;
                         }
 
@@ -446,25 +459,26 @@ void CodeGenerator::generateSpim(ParseNode *treeNode)
                            outputFile << "($fp)" << endl;
                            outputFile << "   sw $"; 
                            printReg(pointer);
-                           outputFile << loopCount - 4 << "($sp)" << endl; 
-                           loopCount -= 4;  
+                           outputFile << argOffset << "($sp)" << endl; 
+                           argOffset += 4;  
                         }      
                         else
                         {
-                           offset =  ((numParameters - tmp->getParamNum()) * 4) - offset;
+                           offset =  ((numArguments - tmp->getParamNum()) * 4) - offset;
                            outputFile << "   lw $";
                            printReg(pointer);
                            outputFile << offset;
                            outputFile << "($fp)" << endl;
                            outputFile << "   sw $";
                            printReg(pointer);
-                           outputFile << loopCount - 4 << "($sp)" << endl;
-                           loopCount -= 4;
+                           outputFile << argOffset << "($sp)" << endl;
+                           argOffset += 4;
                         }
                      }
                      tmp = tmp->getSibling();
                   }
                   outputFile << "   jal " << treeNode->getString() << endl; 
+                  outputFile << "   add $sp, $sp, " << argStackSize << endl;
                }
                break;
             case OpExp:
@@ -734,11 +748,13 @@ void CodeGenerator::generateFunctionCode(ParseNode* node)
       ++numParameters;
       tmp = tmp->getSibling();
    }
-   
+  
+   /* This code seems to be incorrectly determining local variable space,
+      so I'm commenting it out until I fix it. 
    tmp = node->getChild(1); 
    if(tmp)
       tmp = node->getChild(0);
-   
+  
    while (tmp)
    {  
       // if this is an array, add the index so we can allocate
@@ -750,15 +766,12 @@ void CodeGenerator::generateFunctionCode(ParseNode* node)
  
       tmp = tmp->getSibling();
    }
+   */
    
    // check how many S registers are used so we can save them
    if (numS > 0)
       numMemLocations+=numS;
 
-   // if there were any parameters passed to this function, they 
-   // are already on the stack and the first 4 are in the a0-a3 registers
-   numMemLocations+=numParameters;
- 
    // finally, add 2 to the number of memory locations to save the 
    // return address and frame pointer. Multiply the whole thing by
    // 4 to get the actual number of bytes needed.      
@@ -768,19 +781,15 @@ void CodeGenerator::generateFunctionCode(ParseNode* node)
    // write the memory allocation
    outputFile << "   sub $sp, $sp, " << numMemLocations << endl;
 
-   // the new frame pointer is below the parameters and above the about to
-   // be saved old frame pointer and return address
-   framePointer = numMemLocations - (numParameters*4);
-
    // save the frame pointer and the return address
-   outputFile << "   sw $fp, " << framePointer - 4 << "($sp)" << endl; 
-   outputFile << "   sw $ra, " << framePointer - 8 << "($sp)" << endl;
+   outputFile << "   sw $fp, " << numMemLocations - 4 << "($sp)" << endl; 
+   outputFile << "   sw $ra, " << numMemLocations - 8 << "($sp)" << endl;
    
    // now the new frame pointer is assigned
-   outputFile << "   add $fp, $sp, " << framePointer << endl;
+   outputFile << "   add $fp, $sp, " << numMemLocations << endl;
 
    // save and clear the S registers
-   int savedLocation = framePointer - 8;
+   int savedLocation = numMemLocations - 8;
    if (numS > 0)
    {
       for ( int i = 17; i < 25; ++i)
@@ -812,7 +821,6 @@ void CodeGenerator::generateFunctionCode(ParseNode* node)
       savedLocation += 4;
       while (saveS > 0)
       {
-         savedLocation += (numParameters * 4);
          // figure out which register we need to restore
          index = (17+(saveS/4));
          saveS -= 4;
@@ -826,8 +834,8 @@ void CodeGenerator::generateFunctionCode(ParseNode* node)
 
    // restore the return address and frame pointer, then restore the 
    // stack    
-   outputFile << "   lw $fp, " << framePointer - 4 << "($sp)" << endl;
-   outputFile << "   lw $ra, " << framePointer - 8 << "($sp)" << endl;
+   outputFile << "   lw $fp, " << numMemLocations - 4 << "($sp)" << endl;
+   outputFile << "   lw $ra, " << numMemLocations - 8 << "($sp)" << endl;
 
    outputFile << "   add $sp, $sp, " << numMemLocations << endl;
 
