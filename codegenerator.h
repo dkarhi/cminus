@@ -749,24 +749,23 @@ void CodeGenerator::generateFunctionCode(ParseNode* node)
       tmp = tmp->getSibling();
    }
   
-   /* This code seems to be incorrectly determining local variable space,
-      so I'm commenting it out until I fix it. 
    tmp = node->getChild(1); 
    if(tmp)
       tmp = node->getChild(0);
   
    while (tmp)
    {  
-      // if this is an array, add the index so we can allocate
-      // enough space
-      if (tmp->getChild(0))
-         numMemLocations += tmp->getChild(0)->getNum();
-      else
-         ++numMemLocations;
+      // if this is a variable declaration, allocate space for the variable
+      if (tmp->isVarDecl()) {
+         // if this is an array, add the index so we can allocate enough space
+         if (tmp->getChild(0))
+            numMemLocations += tmp->getChild(0)->getNum();
+         else
+            ++numMemLocations;
+      }
  
       tmp = tmp->getSibling();
    }
-   */
    
    // check how many S registers are used so we can save them
    if (numS > 0)
