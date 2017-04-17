@@ -455,11 +455,11 @@ void CodeGenerator::generateSpim(ParseNode *treeNode)
                            
                            outputFile << "   lw $";
                            printReg(pointer);
-                           outputFile << -offset;
+                           outputFile << ", " << -offset;
                            outputFile << "($fp)" << endl;
                            outputFile << "   sw $"; 
                            printReg(pointer);
-                           outputFile << argOffset << "($sp)" << endl; 
+                           outputFile << ", " << argOffset << "($sp)" << endl; 
                            argOffset += 4;  
                         }      
                         else
@@ -467,11 +467,11 @@ void CodeGenerator::generateSpim(ParseNode *treeNode)
                            offset =  ((numArguments - tmp->getParamNum()) * 4) - offset;
                            outputFile << "   lw $";
                            printReg(pointer);
-                           outputFile << offset;
+                           outputFile << ", " << offset;
                            outputFile << "($fp)" << endl;
                            outputFile << "   sw $";
                            printReg(pointer);
-                           outputFile << argOffset << "($sp)" << endl;
+                           outputFile << ", " << argOffset << "($sp)" << endl;
                            argOffset += 4;
                         }
                      }
